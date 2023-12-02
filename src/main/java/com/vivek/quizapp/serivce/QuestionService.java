@@ -1,8 +1,11 @@
 package com.vivek.quizapp.serivce;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
 import com.vivek.quizapp.dao.QuestionDao;
@@ -14,35 +17,60 @@ public class QuestionService {
 	@Autowired
 	QuestionDao questionDao;
 	
-	public List<Question> getAllQuestions() {
-		return questionDao.findAll();
-		
+	public ResponseEntity<List<Question>> getAllQuestions() {
+		try {
+			return new ResponseEntity<>( questionDao.findAll(), HttpStatus.OK);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return new ResponseEntity<>(new ArrayList<>(), HttpStatus.BAD_REQUEST);
 	}
 
-	public List<Question> getQuestionByCategory(String param) {
-		
-		return questionDao.findQuestionByCategory(param);
+	public ResponseEntity<List<Question>> getQuestionByCategory(String param) {
+		try {
+			return new ResponseEntity<>(questionDao.findQuestionByCategory(param), HttpStatus.OK);
+		}catch (Exception e) {
+			e.printStackTrace();
+		}
+		return new ResponseEntity<>(new ArrayList<>(),HttpStatus.BAD_REQUEST);
 	}
 
-	public String addQuestion(Question question) {
-		
+	public ResponseEntity<String> addQuestion(Question question) {
+		try {
 		 questionDao.save(question);
-		 return "success";
+		 return new ResponseEntity<>(new String("success"), HttpStatus.OK);
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		return new ResponseEntity<>(new String(), HttpStatus.BAD_REQUEST);
+		 
 	}
 
-	public String deleteQuestionById(Integer id) {
-		
+	public ResponseEntity<String> deleteQuestionById(Integer id) {
+		try {
 		questionDao.deleteById(id);
-		return "success";
+		return new ResponseEntity<>(new String("success"),HttpStatus.BAD_REQUEST);
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		return new ResponseEntity<>(new String(),HttpStatus.BAD_REQUEST);
+		
 	}
 
-	public String updateQuestionById(Integer id, Question question) {
+	public ResponseEntity<String> updateQuestionById(Integer id, Question question) {
+		try {
 		if(question.getId()==id)
 		{
 			 questionDao.save(question);
-			 return "success";
+			 return new ResponseEntity<>(new String("success"),HttpStatus.BAD_REQUEST);
 		}
-		return "fail";
+		else
+			return new ResponseEntity<>(new String("wrong id"),HttpStatus.BAD_REQUEST);
+		}catch(Exception e) {
+			e.printStackTrace();
+		}
+		
+		return new ResponseEntity<>(new String(),HttpStatus.BAD_REQUEST);
 			
 	}
 }
